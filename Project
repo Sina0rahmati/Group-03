@@ -2,9 +2,7 @@
 #include <vector>
 #include <string>
 #include <map>
-#include <stdexcept> // برای مدیریت خطاها
-
-// برای استفاده از فضای نام std
+#include <stdexcept> 
 using namespace std;
 
 // تعریف نوع داده برای ستون ها
