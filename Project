@@ -4,28 +4,31 @@
 #include <map>
 #include <stdexcept> // برای مدیریت خطاها
 
+// برای استفاده از فضای نام std
+using namespace std;
+
 // تعریف نوع داده برای ستون ها
 enum class DataType { INT, STRING, FLOAT };
 
 // ساختار برای تعریف یک ستون
 struct Column {
-    std::string name;
+    string name;
     DataType type;
 };
 
 // کلاس برای تعریف Schema یک جدول
 class TableSchema {
 public:
-    TableSchema(const std::string& tableName, const std::vector<Column>& columns) : tableName_(tableName), columns_(columns) {}
+    TableSchema(const string& tableName, const vector<Column>& columns) 
+        : tableName_(tableName), columns_(columns) {}
 
-    const std::string& getTableName() const { return tableName_; }
-    const std::vector<Column>& getColumns() const { return columns_; }
+    const string& getTableName() const { return tableName_; }
+    const vector<Column>& getColumns() const { return columns_; }
 
 private:
-    std::string tableName_;
-    std::vector<Column> columns_;
+    string tableName_;
+    vector<Column> columns_;
 };
-
 
 // کلاس برای مدیریت جدول داده ها
 class Database {
@@ -35,39 +38,39 @@ public:
         tables_[schema.getTableName()] = schema;
     }
 
-
-    bool insertRecord(const std::string& tableName, const std::vector<std::string>& values) {
-          // اعتبارسنجی و اضافه کردن رکورد به جدول مناسب
-          // ... (این بخش نیاز به پیاده سازی دارد) ...
-          return true; // موقتا true برمیگرداند.
+    bool insertRecord(const string& tableName, const vector<string>& values) {
+        // اعتبارسنجی و اضافه کردن رکورد به جدول مناسب.
+        // ... (این بخش نیاز به پیاده سازی دارد)
+        return true; // موقتا true برمیگرداند.
     }
 
-    // جستجو در جدول (نیازمند پیاده سازی کامل)
-    std::vector<std::vector<std::string>> findRecords(const std::string& tableName, const std::string& columnName, const std::string& value) {
-        // ... (این بخش نیاز به پیاده سازی دارد) ...
-        return {}; // موقتا یک vector خالی بر میگرداند
+    // جستجو در جدول (نیازمند پیاده سازی کامل).
+    vector<vector<string>> findRecords(const string& tableName, const string& columnName, const string& value) {
+        // ... (این بخش نیاز به پیاده سازی دارد)
+        return {}; // موقتا یک vector خالی بر میگرداند.
     }
 
-
-    // به‌روزرسانی رکورد (نیازمند پیاده سازی کامل)
-    bool updateRecord(const std::string& tableName, const std::string& columnName, const std::string& oldValue, const std::string& newValue) {
-        // ... (این بخش نیاز به پیاده سازی دارد) ...
+    // به‌روزرسانی رکورد (نیازمند پیاده سازی کامل).
+    bool updateRecord(const string& tableName, const string& columnName, const string& oldValue, const string& newValue) {
+        // ... (این بخش نیاز به پیاده سازی دارد)
         return false; // موقتا false برمیگرداند.
     }
 
-    // حذف رکورد (نیازمند پیاده سازی کامل)
-    bool deleteRecord(const std::string& tableName, int recordId) {
-        // ... (این بخش نیاز به پیاده سازی دارد) ...
+    // حذف رکورد (نیازمند پیاده سازی کامل).
+    bool deleteRecord(const string& tableName, int recordId) {
+        // ... (این بخش نیاز به پیاده سازی دارد)
         return false; // موقتا false برمیگرداند.
     }
-
 
 private:
-    std::map<std::string, TableSchema> tables_;
-    // ساختار داده برای ذخیره رکوردها (نیازمند طراحی و پیاده سازی)
+    map<string, TableSchema> tables_;
+    
+    // ساختار داده برای ذخیره رکوردها (نیازمند طراحی و پیاده سازی).
+    // مثلا: map<string, vector<vector<string>>> data_;
+};
     // مثلا: std::map<std::string, std::vector<std::vector<std::string>>> data_;
 
 };
 
 
-version 0.1.0
+version 0.1.2
