@@ -2,8 +2,11 @@
 #include <vector>
 #include <string>
 #include <map>
-#include <stdexcept> 
+#include <stdexcept>
+#include <memory>
+#include <algorithm>
 using namespace std;
+
 
 // تعریف نوع داده برای ستون ها
 enum class DataType { INT, STRING, FLOAT };
@@ -71,4 +74,4 @@ private:
 };
 
 
-version 0.1.2
+version 0.1.3
