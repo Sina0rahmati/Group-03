@@ -20,7 +20,7 @@ struct Column {
 };
 
 
-//برای ایجاد بیس جدول 
+// طبق تعیین وظایف برای ایجاد یک جدول لازم داریم کلاس زیر را تعریف کنم
 class TableSchema {
 public:
     TableSchema(const string& tableName, const vector<Column>& columns) 
