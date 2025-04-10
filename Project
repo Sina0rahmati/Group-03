@@ -38,7 +38,11 @@ public:
         return -1;
     }
 
-    
+    bool validateRecord(const vector<string>& values) const {
+        if (values.size() != columns_.size()) {
+            return false;
+        }
+
         
 return true;
     }
