@@ -20,7 +20,7 @@ struct Column {
 };
 
 
-/// کلاس برای تعریف Schema یک جدول
+//برای ایجاد بیس جدول 
 class TableSchema {
 public:
     TableSchema(const string& tableName, const vector<Column>& columns) 
@@ -95,4 +95,4 @@ private:
 };
 
 
-version 1.1.4
+version 1.1.5
