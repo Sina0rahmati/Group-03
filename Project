@@ -20,7 +20,7 @@ struct Column {
 };
 
 
-// کلاس برای تعریف Schema یک جدول
+/// کلاس برای تعریف Schema یک جدول
 class TableSchema {
 public:
     TableSchema(const string& tableName, const vector<Column>& columns) 
@@ -28,6 +28,20 @@ public:
 
     const string& getTableName() const { return tableName_; }
     const vector<Column>& getColumns() const { return columns_; }
+
+    int getColumnIndex(const string& columnName) const {
+        for (int i = 0; i < columns_.size(); ++i) {
+            if (columns_[i].name == columnName) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    
+        
+return true;
+    }
 
 private:
     string tableName_;
@@ -77,4 +91,4 @@ private:
 };
 
 
-version 0.1.4
+version 1.1.4
