@@ -72,11 +72,25 @@ public:
     }
 
 
-    bool insertRecord(const string& tableName, const vector<string>& values) {
-        // اعتبارسنجی و اضافه کردن رکورد به جدول مناسب.
-        // ... (این بخش نیاز به پیاده سازی دارد)
-        return true; // موقتا true برمیگرداند.
+       // نمایش تمام جداول
+    void showTables() const {
+        cout << "Tables in Arvan Database:\n";
+        for (const auto& pair : tables_) {
+            cout << "- " << pair.first << " (";
+            const auto& columns = pair.second.getColumns();
+            for (size_t i = 0; i < columns.size(); ++i) {
+                cout << columns[i].name;
+                if (i < columns.size() - 1) cout << ", ";
+            }
+            cout << ")\n";
+        }
     }
+
+
+
+
+
+
 
     // جستجو در جدول (نیازمند پیاده سازی کامل).
     vector<vector<string>> findRecords(const string& tableName, const string& columnName, const string& value) {
@@ -107,4 +121,4 @@ private:
 };
 
 
-version 1.4.5
+version 1.5.5
