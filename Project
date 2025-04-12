@@ -63,12 +63,14 @@ private:
 public:
 
 
-
-
     // اضافه کردن یک جدول جدید
     void addTable(const TableSchema& schema) {
-        tables_[schema.getTableName()] = schema;
+        string tableName = schema.getTableName();
+        tables_.emplace(tableName, schema);
+        data_[tableName] = vector<unique_ptr<Record>>();
+        nextIds_[tableName] = 1;
     }
+
 
     bool insertRecord(const string& tableName, const vector<string>& values) {
         // اعتبارسنجی و اضافه کردن رکورد به جدول مناسب.
