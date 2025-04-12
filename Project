@@ -52,9 +52,15 @@ private:
     vector<Column> columns_;
 };
 
-// کلاس برای مدیریت جدول داده ها
+
+//یک کلاس برای مدیریت جدول داده ها تعریف میکنم 
+
 class Database {
-public:
+private:
+    map<string, TableSchema> tables_;
+    map<string, vector<unique_ptr<Record>>> data_;
+    map<string, int> nextIds_;
+
     // اضافه کردن یک جدول جدید
     void addTable(const TableSchema& schema) {
         tables_[schema.getTableName()] = schema;
