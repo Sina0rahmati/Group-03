@@ -11,7 +11,7 @@ using namespace std;
 // تعریف نوع داده برای ستون ها
 enum class DataType { INT, STRING, FLOAT };
 
-// ساختار برای تعریف یک ستون
+// یک ساختار برای تعریف یک ستون تعریف میکنیم
 struct Column {
     string name;
     DataType type;
@@ -63,7 +63,7 @@ private:
 public:
 
 
-    // اضافه کردن یک جدول جدید
+    // برای اضافه کردن یک جدول جدید
     void addTable(const TableSchema& schema) {
         string tableName = schema.getTableName();
         tables_.emplace(tableName, schema);
@@ -72,7 +72,7 @@ public:
     }
 
 
-       // نمایش تمام جداول
+       // نمایش تمام جدول های موجودمون
     void showTables() const {
         cout << "Tables in Arvan Database:\n";
         for (const auto& pair : tables_) {
@@ -87,7 +87,7 @@ public:
     }
 
 
-    // نمایش محتوای یک جدول
+    // نشون دادن یک جدول
     void showTableData(const string& tableName) const {
         auto tableIt = tables_.find(tableName);
         if (tableIt == tables_.end()) {
@@ -133,4 +133,4 @@ private:
 };
 
 
-version 1.6.5
+version 1.6.6
