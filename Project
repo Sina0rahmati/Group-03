@@ -87,6 +87,18 @@ public:
     }
 
 
+    // نمایش محتوای یک جدول
+    void showTableData(const string& tableName) const {
+        auto tableIt = tables_.find(tableName);
+        if (tableIt == tables_.end()) {
+            throw runtime_error("Table not found");
+        }
+
+        const auto& schema = tableIt->second;
+        const auto& records = data_.at(tableName);
+
+
+
 
 
 
@@ -121,4 +133,4 @@ private:
 };
 
 
-version 1.5.5
+version 1.6.5
