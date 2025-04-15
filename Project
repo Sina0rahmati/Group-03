@@ -116,6 +116,10 @@ public:
         if (tableIt == tables_.end()) {
             throw runtime_error("Table not found");
         }
+        const auto& schema = tableIt->second;
+        if (!schema.validateRecord(values)) {
+            throw runtime_error("Invalid record data");
+        }
 
 
 
