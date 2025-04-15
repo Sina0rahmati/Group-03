@@ -110,8 +110,13 @@ public:
         }
     }
 
-   // درج رکورد جدید
- .....
+    // درج کردن رکورد جدید
+    bool insertRecord(const string& tableName, const vector<string>& values) {
+        auto tableIt = tables_.find(tableName);
+        if (tableIt == tables_.end()) {
+            throw runtime_error("Table not found");
+        }
+
 
 
 
