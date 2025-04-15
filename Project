@@ -103,8 +103,15 @@ public:
     // نمایش داده‌ها
         for (const auto& record : records) {
             cout << record->getId() << "\t";
-      
+        for (const auto& value : record->getValues()) {
+                cout << value << "\t";
+            }
+            cout << "\n";
+        }
+    }
 
+   // درج رکورد جدید
+ .....
 
 
 
@@ -140,4 +147,4 @@ private:
 };
 
 
-version 1.6.6
+version 1.7.6
