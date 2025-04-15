@@ -143,11 +143,27 @@ public:
         return false; // موقتا false برمیگرداند.
     }
 
-    // حذف رکورد (نیازمند پیاده سازی کامل).
+        // حذف رکورد
     bool deleteRecord(const string& tableName, int recordId) {
-        // ... (این بخش نیاز به پیاده سازی دارد)
-        return false; // موقتا false برمیگرداند.
+        auto tableIt = tables_.find(tableName);
+        if (tableIt == tables_.end()) {
+            throw runtime_error("Table not found");
+        }
+
+        auto& records = data_[tableName];
+        auto it = find_if(records.begin(), records.end(), 
+            [recordId](const unique_ptr<Record>& r) { return r->getId() == recordId; });
+
+        if (it != records.end()) {
+            records.erase(it);
+            return true;
+        }
+
+        return false;
     }
+};
+
+
 
 private:
     map<string, TableSchema> tables_;
@@ -160,4 +176,4 @@ private:
 };
 
 
-version 1.8.8
+version 1.9.8
