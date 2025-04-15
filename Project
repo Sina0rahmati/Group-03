@@ -120,6 +120,10 @@ public:
         if (!schema.validateRecord(values)) {
             throw runtime_error("Invalid record data");
         }
+    int newId = nextIds_[tableName]++;
+        data_[tableName].emplace_back(make_unique<Record>(newId, values));
+        return true;
+    }
 
 
 
