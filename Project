@@ -172,7 +172,17 @@ const auto& records = data_.at(tableName);
             throw runtime_error("Column not found");
         }
 
-      
+      int updatedCount = 0;
+        auto& records = data_[tableName];
+        for (auto& record : records) {
+            if (record->getValue(colIndex) == oldValue) {
+                record->setValue(colIndex, newValue);
+                updatedCount++;
+            }
+        }
+
+        return updatedCount;
+    }
 
 
 
