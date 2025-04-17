@@ -145,8 +145,15 @@ public:
         if (colIndex == -1) {
             throw runtime_error("Column not found");
         }
+const auto& records = data_.at(tableName);
+        for (const auto& record : records) {
+            if (record->getValue(colIndex) == value) {
+                results.push_back(record.get());
+            }
+        }
 
-
+        return results;
+    }
 
 
 
