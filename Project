@@ -19,6 +19,26 @@ struct Column {
     Column(const string& n, DataType t) : name(n), type(t) {}
 };
 
+// برای ساختارمند کردن کدمون یه کلاس رکورد تعریف میکنیم
+class Record {
+private:
+    vector<string> values_;
+    int id_;
+
+public:
+    Record(int id, const vector<string>& values) : id_(id), values_(values) {}
+
+    int getId() const { return id_; }
+    const vector<string>& getValues() const { return values_; }
+
+    void setValue(int index, const string& value) {
+        if (index >= 0 && index < values_.size()) {
+            values_[index] = value;
+        }
+    }
+
+    
+
 
 // طبق تعیین وظایف برای ایجاد یک جدول لازم داریم کلاس زیر را تعریف کنم
 class TableSchema {
