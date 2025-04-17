@@ -266,3 +266,38 @@ void runInteractive() {
                 continue;
             }
   
+          auto& schema = db.getTable(table);
+            Record record;
+            const auto& cols = schema.getColumns();
+            for (const auto& col : cols) {
+                string val;
+                if (!(ss >> val)) {
+                    cout << "Not enough values.\n";
+                    break;
+                }
+                record[col.name] = val;
+            }
+            schema.addRecord(record);
+        } else if (command == "delete") {
+            string table;
+            int id;
+            ss >> table >> id;
+            if (!db.hasTable(table)) {
+                cout << "Table does not exist.\n";
+                continue;
+            }
+            db.getTable(table).deleteRecord(id);
+        } else if (command == "update") {
+            string table;
+            int id;
+            ss >> table >> id;
+            if (!db.hasTable(table)) {
+                cout << "Table does not exist.\n";
+                continue;
+            }
+            auto& schema = db.getTable(table);
+            if (!schema.hasRecord(id)) {
+                cout << "Record not found.\n";
+                continue;
+            }
+  
