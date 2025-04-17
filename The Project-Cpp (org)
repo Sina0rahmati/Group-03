@@ -82,4 +82,46 @@ public:
             cout << "\n";
         }
     }
-...
+
+
+
+    // hasRecord: این بخش رو بابت بررسی وجودیت یک رکورد قرار میدیم
+    bool hasRecord(int id) const {
+        return records_.count(id);
+    }
+
+
+
+
+......
+
+
+
+
+
+// کلاس DbInfo: نگهداری اطلاعات مربوط به پایگاه داده، مانند جدولا
+
+class DbInfo {
+public:
+    map<string, TableSchema> tables_; // نگاشتی از نام جدول به TableSchema
+};
+
+// کلاس Database:مدیریت عملیات مربوط به  دیتابیس 
+
+class Database {
+    unique_ptr<DbInfo> dbInfo_; // اشاره‌گر یکتا به DbInfo برای مدیریت اطلاعات پایگاه داده
+
+public:
+    // سازنده: ایجاد یک Database با مقداردهی اولیه DbInfo
+    Database() : dbInfo_(make_unique<DbInfo>()) {}
+
+    // createTable: درست کردن یه جدول جدید
+    void createTable(const string& tableName, const vector<Columns>& columns) {
+        if (dbInfo_->tables_.count(tableName)) {
+            cout << "Table already exists.\n";
+            return;
+        }
+        dbInfo_->tables_.emplace(tableName, TableSchema(tableName, columns));
+        cout << "Table '" << tableName << "' created.\n";
+    }
+
