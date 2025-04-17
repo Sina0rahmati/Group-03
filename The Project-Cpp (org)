@@ -300,4 +300,46 @@ void runInteractive() {
                 cout << "Record not found.\n";
                 continue;
             }
-  
+
+            Record record;
+            const auto& cols = schema.getColumns();
+
+            for (const auto& col : cols) {
+                string val;
+                if (!(ss >> val)) {
+                    cout << "Not enough values.\n";
+                    break;
+                }
+                record[col.name] = val;
+            }
+            schema.updateRecord(id, record);
+        } else if (command == "print") {
+            string table;
+            ss >> table;
+            if (!db.hasTable(table)) {
+                cout << "Table does not exist.\n";
+                continue;
+            }
+            db.getTable(table).printRecords();
+        } else if (command == "find") {
+            string table, column, value;
+            ss >> table >> column >> value;
+            if (!db.hasTable(table)) {
+                cout << "Table does not exist.\n";
+                continue;
+            }
+            db.getTable(table).findRecord(column, value);
+        } else {
+            cout << "Unknown command. Type 'help' for list.\n";
+        }
+    }
+}
+
+
+int main() {
+    runInteractive(); 
+    return 0; 
+}
+
+
+version 3.0.0
