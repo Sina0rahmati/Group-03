@@ -159,11 +159,23 @@ const auto& records = data_.at(tableName);
 
 
 
-    // به‌روزرسانی رکورد (نیازمند پیاده سازی کامل).
-    bool updateRecord(const string& tableName, const string& columnName, const string& oldValue, const string& newValue) {
-        // ... (این بخش نیاز به پیاده سازی دارد)
-        return false; // موقتا false برمیگرداند.
-    }
+        // به‌روزرسانی رکورد
+    int updateRecords(const string& tableName, const string& columnName, const string& oldValue, const string& newValue) {
+        auto tableIt = tables_.find(tableName);
+        if (tableIt == tables_.end()) {
+            throw runtime_error("Table not found");
+        }
+
+        const auto& schema = tableIt->second;
+        int colIndex = schema.getColumnIndex(columnName);
+        if (colIndex == -1) {
+            throw runtime_error("Column not found");
+        }
+
+      
+
+
+
 
         // حذف رکورد
     bool deleteRecord(const string& tableName, int recordId) {
@@ -198,4 +210,4 @@ private:
 };
 
 
-version 1.10.8
+version 1.11.8
