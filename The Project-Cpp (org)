@@ -181,3 +181,47 @@ public:
         return dbInfo_->tables_.at(name);
     }
 };
+
+//پنل راهنمایی برای کاربر
+void printHelp() {
+    cout << "Commands:\n"
+         << "  help                           Show this help\n"
+         << "  create <table> <col:type>...   Create a new table\n"
+         << "  drop <table>                   Delete a table\n"
+         << "  show                           List all tables\n"
+         << "  describe <table>               Show table columns\n"
+         << "  insert <table> <val>...        Insert a record\n"
+         << "  delete <table> <id>            Delete a record\n"
+         << "  update <table> <id> <val>...   Update a record\n"
+         << "  print <table>                  Show all records in table\n"
+         << "  find <table> <col> <val>       Search records by column value\n"
+         << "  exit                           Exit the program\n";
+}
+
+// runInteractive: پیاده و ران کردن حالت تعاملی برنامه
+
+void runInteractive() {
+    Database db;
+    string line;
+
+    cout << "Welcome to the interactive DBArvan [programed by sina&helia!\nType 'help' for commands.\n";
+
+    while (true) {
+        cout << "> ";
+        getline(cin, line);
+        stringstream ss(line);
+
+        string command;
+        ss >> command;
+
+        if (command == "exit") {
+            break;
+        } else if (command == "help") {
+            printHelp();
+        } else if (command == "create") {
+            string tableName;
+            ss >> tableName;
+            if (tableName.empty()) {
+                cout << "Table name required.\n";
+                continue;
+            }
