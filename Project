@@ -233,8 +233,21 @@ void testArvanDatabase() {
 
     // نمایش جدولا
     arvanDB.showTables();
+    // درج داده‌ها
+    arvanDB.insertRecord("Person", {"Sina", "19", "Driver"});
+    arvanDB.insertRecord("Person", {"Helia", "18", "Programer"});
+    arvanDB.insertRecord("Person", {"Elara", "28", "Healer"});
+
+    arvanDB.insertRecord("Location", {"Velenjak", "Northern", "5000"});
+    arvanDB.insertRecord("Location", {"Jahrom", "Eastern", "3200"});
+    arvanDB.insertRecord("Location", {"Eze", "Northern", "4500"});
+    // نمایش داده‌ها
+    cout << "\nBefore updates:\n";
+    arvanDB.showTableData("Person");
+    arvanDB.showTableData("Location");
 
 
 
 
-version 2.11.8
+
+version 2.11.9
