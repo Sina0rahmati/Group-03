@@ -154,3 +154,15 @@ public:
         }
     }
 
+
+     void listTables() const {
+        if (dbInfo_->tables_.empty()) {
+            cout << "No tables defined yet.\n";
+            return;
+        }
+        cout << "Tables:\n";
+        for (const auto& pair : dbInfo_->tables_) {
+            cout << " - " << pair.first << "\n";
+        }
+    }
+
