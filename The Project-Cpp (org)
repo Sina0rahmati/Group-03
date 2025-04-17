@@ -145,3 +145,12 @@ public:
         cout << "Table '" << tableName << "' created.\n";
     }
 
+
+        void deleteTable(const string& tableName) {
+        if (!dbInfo_->tables_.erase(tableName)) {
+            cout << "No such table.\n";
+        } else {
+            cout << "Table '" << tableName << "' deleted.\n";
+        }
+    }
+
