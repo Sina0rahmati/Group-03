@@ -131,11 +131,26 @@ public:
 
 
 
-    // جستجو در جدول (نیازمند پیاده سازی کامل).
-    vector<vector<string>> findRecords(const string& tableName, const string& columnName, const string& value) {
-        // ... (این بخش نیاز به پیاده سازی دارد)
-        return {}; // موقتا یک vector خالی بر میگرداند.
-    }
+        // جستجوی کردن تو جدول :رکوردها
+    vector<const Record*> findRecords(const string& tableName, const string& columnName, const string& value) const {
+        vector<const Record*> results;
+
+        auto tableIt = tables_.find(tableName);
+        if (tableIt == tables_.end()) {
+            throw runtime_error("Table not found");
+        }
+
+        const auto& schema = tableIt->second;
+        int colIndex = schema.getColumnIndex(columnName);
+        if (colIndex == -1) {
+            throw runtime_error("Column not found");
+        }
+
+
+
+
+
+
 
     // به‌روزرسانی رکورد (نیازمند پیاده سازی کامل).
     bool updateRecord(const string& tableName, const string& columnName, const string& oldValue, const string& newValue) {
@@ -176,4 +191,4 @@ private:
 };
 
 
-version 1.9.8
+version 1.10.8
