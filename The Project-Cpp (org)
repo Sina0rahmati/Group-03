@@ -225,3 +225,44 @@ void runInteractive() {
                 cout << "Table name required.\n";
                 continue;
             }
+
+           vector<Columns> cols;
+            string colDef;
+            while (ss >> colDef) {
+                size_t pos = colDef.find(":");
+                if (pos == string::npos) {
+                    cout << "Invalid column format. Use name:type\n";
+                    continue;
+                }
+                string colName = colDef.substr(0, pos);
+                string colType = colDef.substr(pos + 1);
+                cols.push_back({colName, colType});
+            }
+
+            db.createTable(tableName, cols);
+        } else if (command == "drop") {
+            string table;
+            ss >> table;
+            db.deleteTable(table);
+        } else if (command == "show") {
+            db.listTables();
+        } else if (command == "describe") {
+            string table;
+            ss >> table;
+            if (!db.hasTable(table)) {
+                cout << "No such table: " << table << "\n";
+                continue;
+            }
+            const auto& cols = db.getColumns(table);
+            cout << "Columns in '" << table << "':\n";
+            for (const auto& col : cols) {
+                cout << " - " << col.name << " (" << col.type << ")\n";
+            }
+        } else if (command == "insert") {
+            string table;
+            ss >> table;
+            if (!db.hasTable(table)) {
+                cout << "Table does not exist.\n";
+                continue;
+            }
+  
