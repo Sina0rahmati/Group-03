@@ -212,15 +212,29 @@ const auto& records = data_.at(tableName);
 
 
 
-private:
-    map<string, TableSchema> tables_;
-    
-    // ساختار داده برای ذخیره رکوردها (نیازمند طراحی و پیاده سازی).
-    // مثلا: map<string, vector<vector<string>>> data_;
-};
-    // مثلا: std::map<std::string, std::vector<std::vector<std::string>>> data_;
+// تابع برای تست سیستممون
+void testArvanDatabase() {
+    Database arvanDB;
 
-};
+    // ایجاد جدول ها
+    vector<Column> personColumns = {
+        Column("name", DataType::STRING),
+        Column("age", DataType::INT),
+        Column("occupation", DataType::STRING)
+    };
+    arvanDB.addTable(TableSchema("Person", personColumns));
+
+    vector<Column> locationColumns = {
+        Column("name", DataType::STRING),
+        Column("region", DataType::STRING),
+        Column("population", DataType::INT)
+    };
+    arvanDB.addTable(TableSchema("Location", locationColumns));
+
+    // نمایش جدولا
+    arvanDB.showTables();
 
 
-version 1.11.8
+
+
+version 2.11.8
