@@ -246,8 +246,35 @@ void testArvanDatabase() {
     arvanDB.showTableData("Person");
     arvanDB.showTableData("Location");
 
+    // جستجو و به‌روزرسانی
+    auto warriors = arvanDB.findRecords("Person", "occupation", "Warrior");
+    cout << "\nFound " << warriors.size() << " warriors:\n";
+    for (auto r : warriors) {
+        cout << "ID: " << r->getId() << ", Name: " << r->getValue(0) << "\n";
+    }
+
+    int updated = arvanDB.updateRecords("Person", "occupation", "Warrior", "Knight");
+    cout << "\nUpdated " << updated << " records\n";
+
+    // حذف یه رکورد
+    arvanDB.deleteRecord("Location", 1);
+
+    // نمایش نهاییمون
+    cout << "\nAfter updates:\n";
+    arvanDB.showTableData("Person");
+    arvanDB.showTableData("Location");
+}
+
+int main() {
+    try {
+        testArvanDatabase();
+    } catch (const exception& e) {
+        cerr << "Error: " << e.what() << endl;
+        return 1;
+    }
+    return 0;
+}
 
 
 
-
-version 2.11.9
+version 2.11.10
