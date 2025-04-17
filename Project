@@ -36,7 +36,13 @@ public:
             values_[index] = value;
         }
     }
-
+string getValue(int index) const {
+        if (index >= 0 && index < values_.size()) {
+            return values_[index];
+        }
+        return "";
+    }
+};
     
 
 
@@ -297,4 +303,4 @@ int main() {
 
 
 
-version 2.11.10
+version 2.12.10
