@@ -166,3 +166,18 @@ public:
         }
     }
 
+
+    // getColumns: گرفتن لیست ستونای یه جدول
+    const vector<Columns>& getColumns(const string& tableName) const {
+        return dbInfo_->tables_.at(tableName).getColumns();
+    }
+
+    bool hasTable(const string& name) const {
+        return dbInfo_->tables_.count(name);
+    }
+
+    // getTable: دریافت کردن یه جدول
+    TableSchema& getTable(const string& name) {
+        return dbInfo_->tables_.at(name);
+    }
+};
