@@ -97,8 +97,11 @@ public:
         const auto& schema = tableIt->second;
         const auto& records = data_.at(tableName);
     //نمایش هدر 
-.....
-
+cout << "Table: " << tableName << "\nID\t";
+        for (const auto& col : schema.getColumns()) {
+            cout << col.name << "\t";
+        }
+        cout << "\n";
 
     // نمایش داده‌ها
         for (const auto& record : records) {
