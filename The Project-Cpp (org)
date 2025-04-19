@@ -89,9 +89,7 @@ public:
     bool hasRecord(int id) const {
         return records_.count(id);
     }
-
-
-    void findRecord(const string& columnName, const string& value) const {
+void findRecord(const string& columnName, const string& value) const {
         cout << "Searching for " << columnName << " = " << value << "\n";
         bool found = false;
         cout << left << setw(8) << "ID";
