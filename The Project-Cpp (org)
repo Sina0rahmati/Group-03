@@ -90,6 +90,7 @@ public:
         return records_.count(id);
     }
 
+
     void findRecord(const string& columnName, const string& value) const {
         cout << "Searching for " << columnName << " = " << value << "\n";
         bool found = false;
@@ -97,6 +98,7 @@ public:
         for (const auto& col : columns_) {
             cout << setw(10) << col.name;
         }
+
         cout << "\n";
         for (const auto& [id, record] : records_) {
             auto it = record.find(columnName);
@@ -126,8 +128,8 @@ public:
     map<string, TableSchema> tables_; // نگاشتی از نام جدول به TableSchema
 };
 
-// کلاس Database:مدیریت عملیات مربوط به  دیتابیس 
 
+// کلاس Database:مدیریت عملیات مربوط به  دیتابیس 
 class Database {
     unique_ptr<DbInfo> dbInfo_; // اشاره‌گر یکتا به DbInfo برای مدیریت اطلاعات پایگاه داده
 
@@ -171,11 +173,9 @@ public:
     const vector<Columns>& getColumns(const string& tableName) const {
         return dbInfo_->tables_.at(tableName).getColumns();
     }
-
     bool hasTable(const string& name) const {
         return dbInfo_->tables_.count(name);
     }
-
     // getTable: دریافت کردن یه جدول
     TableSchema& getTable(const string& name) {
         return dbInfo_->tables_.at(name);
