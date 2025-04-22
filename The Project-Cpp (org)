@@ -111,7 +111,7 @@ for (const auto& [id, record] : records_) {
 
 if (!found) {
     cout << "No matching records found.\n";
-}}}
+}}};
 
 
 
