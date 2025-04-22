@@ -103,10 +103,10 @@ for (const auto& [id, record] : records_) {
         for (const auto& col : columns_) {
             auto valIt = record.find(col.name);
             cout << setw(10) << (valIt != record.end() ? valIt->second : "");
-        }
+     }
         cout << "\n";
         found = true;
-    }
+}
 }
 
 if (!found) {
