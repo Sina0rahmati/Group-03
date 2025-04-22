@@ -41,10 +41,11 @@ public:
         return columns_;
     }
 
-    // addRecord: واسه ایجاد یه رکورد جدید به جدول مون 
+ // addRecord:واسه ایجاد یه رکورد جدید به جدول   
     void addRecord(const Record& record) {
         records_[nextId_++] = record;
     }
+   
 
     // deleteRecord: برای حذف کردن یه رکورد
     
