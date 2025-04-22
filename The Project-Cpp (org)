@@ -92,7 +92,7 @@ void findRecord(const string& columnName, const string& value)
 const
 {  cout << "Searching for " << columnName << " = " << value << "\n";
         bool found =false;
-        cout << left << setw(8) << "ID";
+        cout << left << setw(8) << "ID" ;
         for (const auto& col : columns_) {  cout << setw(10) << col.name; }
 
         cout << "\n";
