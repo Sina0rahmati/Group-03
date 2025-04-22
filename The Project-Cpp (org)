@@ -179,7 +179,7 @@ public:
     }
 };
 
-//پنل راهنمایی برای کاربر
+// پنل راهنمایی برای کاربری که در حال استفاده ست
 void printHelp() {
     cout << "Commands:\n"
          << "  help                           Show this help\n"
