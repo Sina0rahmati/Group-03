@@ -96,24 +96,22 @@ const
         for (const auto& col : columns_) {  cout << setw(10) << col.name; }
 
         cout << "\n";
-        for (const auto& [id, record] : records_) {
-            auto it = record.find(columnName);
-            if (it != record.end() && it->second == value) {
-                cout << setw(8) << id;
-                for (const auto& col : columns_) {
-                    auto valIt = record.find(col.name);
-                    cout << setw(10) << (valIt != record.end() ? valIt->second : "");
-                }
-                cout << "\n";
-                found = true;
-            }
+for (const auto& [id, record] : records_) {
+    auto it = record.find(columnName);
+    if (it != record.end() && it->second == value) {
+        cout << setw(8) << id;
+        for (const auto& col : columns_) {
+            auto valIt = record.find(col.name);
+            cout << setw(10) << (valIt != record.end() ? valIt->second : "");
         }
-        if (!found) {
-            cout << "No matching records found.\n";
-        }
+        cout << "\n";
+        found = true;
     }
-};
+}
 
+if (!found) {
+    cout << "No matching records found.\n";
+}
 
 
 
