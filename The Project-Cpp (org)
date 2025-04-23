@@ -290,10 +290,8 @@ void runInteractive() {
                 continue;
             }
             auto& schema = db.getTable(table);
-            if (!schema.hasRecord(id)) {
-                cout << "Record not found.\n";
-                continue;
-            }
+            if (!schema.hasRecord(id)) {  cout << "Record not found.\n";
+                continue; }
 
             Record record;
             const auto& cols = schema.getColumns();
