@@ -33,13 +33,11 @@ public:
     // getName: برای اینه که اسم جدول رو باهاش تعیین کنیم
     
     const string& getName() const {
-        return tableName_;
-    }
+        return tableName_;}
 
     // getColumns: برای گرفتن لیست ستون های جدول مون 
     const vector<Columns>& getColumns() const {
-        return columns_;
-    }
+        return columns_;}
 
    // addRecord:واسه ایجاد یه رکورد جدید به جدول   
     void addRecord(const Record& record) {  records_[nextId_++] = record;  }
