@@ -1,135 +1,126 @@
-#include <iostream> 
-#include <map> 
-#include <memory>   
-#include <string> 
-#include <vector> 
-#include <sstream> 
+#include <iostream>
+#include <map>
+#include <memory>
+#include <string>
+#include <vector>
+#include <sstream>
 #include <iomanip>
-using namespace std;  
-
+using namespace std;
 
 struct Columns {
-    string name;  
-    string type; 
+    string name;
+    string type;
 };
 
-//تعریف بخش رکورد با مپ و رشته یا همون استرینگ خودمون
 using Record = map<string, string>;
 
- //تعریف کلاس تیبل اسکما برای شکل دهی جدول اصلی که قراره ایجاد بشه
 class TableSchema {
-    string tableName_; 
-    vector<Columns> columns_; 
-    map<int, Record> records_; 
-    int nextId_ = 1; 
+    string tableName_;
+    vector<Columns> columns_;
+    map<int, Record> records_;
+    int nextId_ = 1;
 
 public:
-//یه جدول پیش‌فرض درست میکنیم
-    TableSchema() = default; 
+    TableSchema() = default;
 
     TableSchema(const string& tableName, const vector<Columns>& columns)
         : tableName_(tableName), columns_(columns) {}
 
-    // getName: برای اینه که اسم جدول رو باهاش تعیین کنیم
-    
     const string& getName() const {
-        return tableName_;}
-
-    // getColumns: برای گرفتن لیست ستون های جدول مون 
-    const vector<Columns>& getColumns() const {
-        return columns_;}
-
-   // addRecord:واسه ایجاد یه رکورد جدید به جدول   
-    void addRecord(const Record& record) {  records_[nextId_++] = record;  }
-   
-
-    // deleteRecord: برای حذف کردن یه رکورد
-    
-    void deleteRecord(int id) {
-        records_.erase(id);
+        return tableName_;
     }
 
-    // updateRecord: واسه بروزرسانی یه رکورد
+    const vector<Columns>& getColumns() const {
+        return columns_;
+    }
+
+    void addRecord(Record record) {
+        record["__deleted__"] = "false";
+        records_[nextId_++] = record;
+    }
+
+    void deleteRecord(int id) {
+        if (records_.count(id)) {
+            records_[id]["__deleted__"] = "true";
+        }
+    }
 
     void updateRecord(int id, const Record& newRecord) {
         if (records_.count(id)) {
-            records_[id] = newRecord;
+            Record updated = newRecord;
+            updated["__deleted__"] = "false";
+            records_[id] = updated;
         }
     }
 
-    // printRecords: چاپ تمام رکوردهای جدول 
-    
     void printRecords() const {
         cout << "Table: " << tableName_ << "\n";
-        cout << left << setw(8) << "ID"; // واسه چاپ کردن عنوان با پهنای هشت و دیتیل ID
+        cout << left << setw(8) << "ID";
         for (const auto& col : columns_) {
-            cout << setw(10) << col.name; // برای چاپ اسم هر ستون با اندازه ده تا 
-            
+            cout << setw(10) << col.name;
         }
         cout << "\n";
-        for (const auto& [id, record] : records_) { 
-        // پیمایش تمام رکوردها
-            cout << setw(8) << id; 
+
+        for (const auto& [id, record] : records_) {
+            if (record.count("__deleted__") && record.at("__deleted__") == "true") continue;
+
+            cout << setw(8) << id;
             for (const auto& col : columns_) {
                 auto it = record.find(col.name);
-                // برای سرچ کردن 
-                cout << setw(10) << (it != record.end() ? it->second : ""); 
-                // چاپ کردن مقدار ستون با پهنای 10 کاراکتر و اینکه تراز چپ داشته باشه، اگر مقدار وجود نداشت باشه، یک رشته خالی چاپ میشه
+                cout << setw(10) << (it != record.end() ? it->second : "");
             }
             cout << "\n";
         }
     }
 
-
-
-    // hasRecord: این بخش رو بابت بررسی وجودیت یک رکورد قرار میدیم
     bool hasRecord(int id) const {
-        return records_.count(id);
+        return records_.count(id) && records_.at(id).at("__deleted__") != "true";
     }
-void findRecord(const string& columnName, const string& value)
-const
-{  cout << "Searching for " << columnName << " = " << value << "\n";
-        bool found =false;
-        cout << left << setw(8) << "ID" ;
-        for (const auto& col : columns_) {  cout << setw(10) << col.name; }
 
-        cout << "\n";
-for (const auto& [id, record] : records_) {
-    auto it = record.find(columnName);
-    if (it != record.end() && it->second == value) {
-        cout << setw(8) << id;
+    void findRecord(const string& value) const {
+        cout << "Searching for value: " << value << "\n";
+        bool found = false;
+        cout << left << setw(8) << "ID";
         for (const auto& col : columns_) {
-            auto valIt = record.find(col.name);
-            cout << setw(10) << (valIt != record.end() ? valIt->second : "");
-     }
+            cout << setw(10) << col.name;
+        }
         cout << "\n";
-        found = true;
-}
-}
 
-if (!found) {
-    cout << "No matching records found.\n";
-}}};
+        for (const auto& [id, record] : records_) {
+            if (record.count("__deleted__") && record.at("__deleted__") == "true") continue;
 
+            for (const auto& col : columns_) {
+                auto it = record.find(col.name);
+                if (it != record.end() && it->second == value) {
+                    cout << setw(8) << id;
+                    for (const auto& c : columns_) {
+                        auto valIt = record.find(c.name);
+                        cout << setw(10) << (valIt != record.end() ? valIt->second : "");
+                    }
+                    cout << "\n";
+                    found = true;
+                    break;
+                }
+            }
+        }
 
-
-// کلاس DbInfo: نگهداری اطلاعات مربوط به پایگاه داده، مانند جدولا
+        if (!found) {
+            cout << "No matching records found.\n";
+        }
+    }
+};
 
 class DbInfo {
 public:
-    map<string, TableSchema> tables_; // نگاشتی از نام جدول به TableSchema
+    map<string, TableSchema> tables_;
 };
 
-
-// کلاس Database:مدیریت عملیات مربوط به  دیتابیس 
 class Database {
-    unique_ptr<DbInfo> dbInfo_; // اشاره‌گر یکتا به DbInfo برای مدیریت اطلاعات پایگاه داده
+    unique_ptr<DbInfo> dbInfo_;
 
 public:
-    // سازنده: ایجاد یک Database با مقداردهی اولیه DbInfo
     Database() : dbInfo_(make_unique<DbInfo>()) {}
 
-    // createTable: درست کردن یه جدول جدید
     void createTable(const string& tableName, const vector<Columns>& columns) {
         if (dbInfo_->tables_.count(tableName)) {
             cout << "Table already exists.\n";
@@ -139,8 +130,7 @@ public:
         cout << "Table '" << tableName << "' created.\n";
     }
 
-
-        void deleteTable(const string& tableName) {
+    void deleteTable(const string& tableName) {
         if (!dbInfo_->tables_.erase(tableName)) {
             cout << "No such table.\n";
         } else {
@@ -148,8 +138,7 @@ public:
         }
     }
 
-
-     void listTables() const {
+    void listTables() const {
         if (dbInfo_->tables_.empty()) {
             cout << "No tables defined yet.\n";
             return;
@@ -160,21 +149,19 @@ public:
         }
     }
 
-
-    // getColumns: گرفتن لیست ستونای یه جدول
     const vector<Columns>& getColumns(const string& tableName) const {
         return dbInfo_->tables_.at(tableName).getColumns();
     }
+
     bool hasTable(const string& name) const {
         return dbInfo_->tables_.count(name);
     }
-    // getTable: دریافت کردن یه جدول
+
     TableSchema& getTable(const string& name) {
         return dbInfo_->tables_.at(name);
     }
 };
 
-// پنل راهنمایی برای کاربری که در حال استفاده ست
 void printHelp() {
     cout << "Commands:\n"
          << "  help                           Show this help\n"
@@ -186,17 +173,15 @@ void printHelp() {
          << "  delete <table> <id>            Delete a record\n"
          << "  update <table> <id> <val>...   Update a record\n"
          << "  print <table>                  Show all records in table\n"
-         << "  find <table> <col> <val>       Search records by column value\n"
+         << "  find <table> <val>             Search records by any column value\n"
          << "  exit                           Exit the program\n";
 }
-
-// runInteractive: پیاده و ران کردن حالت تعاملی برنامه
 
 void runInteractive() {
     Database db;
     string line;
 
-    cout << "Welcome to the interactive DBArvan [programed by sina&helia!\nType 'help' for commands.\n";
+    cout << "Welcome to the interactive DBArvan [programmed by sina & helia]!\nType 'help' for commands.\n";
 
     while (true) {
         cout << "> ";
@@ -218,7 +203,7 @@ void runInteractive() {
                 continue;
             }
 
-           vector<Columns> cols;
+            vector<Columns> cols;
             string colDef;
             while (ss >> colDef) {
                 size_t pos = colDef.find(":");
@@ -257,8 +242,8 @@ void runInteractive() {
                 cout << "Table does not exist.\n";
                 continue;
             }
-  
-          auto& schema = db.getTable(table);
+
+            auto& schema = db.getTable(table);
             Record record;
             const auto& cols = schema.getColumns();
             for (const auto& col : cols) {
@@ -288,8 +273,10 @@ void runInteractive() {
                 continue;
             }
             auto& schema = db.getTable(table);
-            if (!schema.hasRecord(id)) {  cout << "Record not found.\n";
-                continue; }
+            if (!schema.hasRecord(id)) {
+                cout << "Record not found.\n";
+                continue;
+            }
 
             Record record;
             const auto& cols = schema.getColumns();
@@ -312,24 +299,20 @@ void runInteractive() {
             }
             db.getTable(table).printRecords();
         } else if (command == "find") {
-            string table, column, value;
-            ss >> table >> column >> value;
+            string table, value;
+            ss >> table >> value;
             if (!db.hasTable(table)) {
                 cout << "Table does not exist.\n";
                 continue;
             }
-            db.getTable(table).findRecord(column, value);
+            db.getTable(table).findRecord(value);
         } else {
             cout << "Unknown command. Type 'help' for list.\n";
         }
     }
 }
 
-
 int main() {
-    runInteractive(); 
-    return 0; 
+    runInteractive();
+    return 0;
 }
-
-
-version 3.0.0
