@@ -1,0 +1,373 @@
+#include <algorithm>
+#include <cstdlib>
+#include <iostream>
+#include <map>
+#include <memory>
+#include <stdexcept>
+#include <string>
+#include <vector>
+
+enum class DataType { INT, STRING, FLOAT };
+
+bool isValidValue(DataType type, const std::string& value) {
+    try {
+        std::size_t pos = 0;
+        if (type == DataType::INT) {
+            std::stoi(value, &pos);
+            return pos == value.size();
+        }
+        if (type == DataType::FLOAT) {
+            std::stof(value, &pos);
+            return pos == value.size();
+        }
+    } catch (...) {
+        return false;
+    }
+    return true;
+}
+
+struct Column {
+    std::string name;
+    DataType type;
+
+    Column(const std::string& n, DataType t) : name(n), type(t) {}
+};
+
+class Record {
+private:
+    int id_;
+    std::vector<std::string> values_;
+
+public:
+    Record(int id, const std::vector<std::string>& values)
+        : id_(id), values_(values) {}
+
+    int getId() const { return id_; }
+    const std::vector<std::string>& getValues() const { return values_; }
+
+    void setValue(std::size_t index, const std::string& value) {
+        if (index >= values_.size()) {
+            throw std::out_of_range("Column index out of range");
+        }
+        values_[index] = value;
+    }
+
+    std::string getValue(std::size_t index) const {
+        if (index >= values_.size()) {
+            throw std::out_of_range("Column index out of range");
+        }
+        return values_[index];
+    }
+};
+
+class TableSchema {
+private:
+    std::string tableName_;
+    std::vector<Column> columns_;
+
+public:
+    TableSchema(const std::string& tableName, const std::vector<Column>& columns)
+        : tableName_(tableName), columns_(columns) {}
+
+    const std::string& getTableName() const { return tableName_; }
+    const std::vector<Column>& getColumns() const { return columns_; }
+
+    int getColumnIndex(const std::string& columnName) const {
+        for (std::size_t i = 0; i < columns_.size(); ++i) {
+            if (columns_[i].name == columnName) {
+                return static_cast<int>(i);
+            }
+        }
+        return -1;
+    }
+
+    bool validateValue(std::size_t colIndex, const std::string& value) const {
+        if (colIndex >= columns_.size()) return false;
+        return isValidValue(columns_[colIndex].type, value);
+    }
+
+    bool validateRecord(const std::vector<std::string>& values) const {
+        if (values.size() != columns_.size()) return false;
+        for (std::size_t i = 0; i < values.size(); ++i) {
+            if (!validateValue(i, values[i])) return false;
+        }
+        return true;
+    }
+};
+
+class Database {
+private:
+    std::string name_;
+    std::map<std::string, TableSchema> tables_;
+    std::map<std::string, std::vector<std::unique_ptr<Record>>> data_;
+    std::map<std::string, int> nextIds_;
+
+    const TableSchema& getSchema(const std::string& tableName) const {
+        auto it = tables_.find(tableName);
+        if (it == tables_.end()) {
+            throw std::runtime_error("Table not found: " + tableName);
+        }
+        return it->second;
+    }
+
+    std::size_t getColumnIndexOrThrow(const TableSchema& schema,
+                                      const std::string& columnName) const {
+        int idx = schema.getColumnIndex(columnName);
+        if (idx == -1) {
+            throw std::runtime_error("Column not found: " + columnName);
+        }
+        return static_cast<std::size_t>(idx);
+    }
+
+public:
+    explicit Database(const std::string& name = "Sina Database") : name_(name) {}
+
+    void addTable(const TableSchema& schema) {
+        const std::string& tableName = schema.getTableName();
+        if (tables_.count(tableName) > 0) {
+            throw std::runtime_error("Table already exists: " + tableName);
+        }
+        tables_.emplace(tableName, schema);
+        data_[tableName];
+        nextIds_[tableName] = 1;
+    }
+
+    const TableSchema& getTableSchema(const std::string& tableName) const {
+        return getSchema(tableName);
+    }
+
+    void showTables() const {
+        std::cout << "Tables in " << name_ << ":\n";
+        for (const auto& pair : tables_) {
+            std::cout << "- " << pair.first << " (";
+            const auto& columns = pair.second.getColumns();
+            for (std::size_t i = 0; i < columns.size(); ++i) {
+                std::cout << columns[i].name;
+                if (i + 1 < columns.size()) std::cout << ", ";
+            }
+            std::cout << ")\n";
+        }
+    }
+
+    void showTableData(const std::string& tableName) const {
+        const auto& schema = getSchema(tableName);
+        const auto& records = data_.at(tableName);
+
+        std::cout << "Table: " << tableName << "\nID\t";
+        for (const auto& col : schema.getColumns()) {
+            std::cout << col.name << "\t";
+        }
+        std::cout << "\n";
+
+        for (const auto& record : records) {
+            std::cout << record->getId() << "\t";
+            for (const auto& value : record->getValues()) {
+                std::cout << value << "\t";
+            }
+            std::cout << "\n";
+        }
+    }
+
+    int insertRecord(const std::string& tableName,
+                     const std::vector<std::string>& values) {
+        const auto& schema = getSchema(tableName);
+        if (!schema.validateRecord(values)) {
+            throw std::runtime_error("Invalid record data for table: " + tableName);
+        }
+        int newId = nextIds_[tableName]++;
+        data_[tableName].push_back(std::make_unique<Record>(newId, values));
+        return newId;
+    }
+
+    std::vector<const Record*> findRecords(const std::string& tableName,
+                                           const std::string& columnName,
+                                           const std::string& value) const {
+        const auto& schema = getSchema(tableName);
+        std::size_t colIndex = getColumnIndexOrThrow(schema, columnName);
+
+        std::vector<const Record*> results;
+        for (const auto& record : data_.at(tableName)) {
+            if (record->getValue(colIndex) == value) {
+                results.push_back(record.get());
+            }
+        }
+        return results;
+    }
+
+    int updateRecords(const std::string& tableName, const std::string& columnName,
+                      const std::string& oldValue, const std::string& newValue) {
+        const auto& schema = getSchema(tableName);
+        std::size_t colIndex = getColumnIndexOrThrow(schema, columnName);
+
+        if (!schema.validateValue(colIndex, newValue)) {
+            throw std::runtime_error("New value does not match column type");
+        }
+
+        int updatedCount = 0;
+        for (auto& record : data_[tableName]) {
+            if (record->getValue(colIndex) == oldValue) {
+                record->setValue(colIndex, newValue);
+                ++updatedCount;
+            }
+        }
+        return updatedCount;
+    }
+
+    bool deleteRecord(const std::string& tableName, int recordId) {
+        getSchema(tableName);
+
+        auto& records = data_[tableName];
+        auto it = std::find_if(records.begin(), records.end(),
+                               [recordId](const std::unique_ptr<Record>& r) {
+                                   return r->getId() == recordId;
+                               });
+
+        if (it != records.end()) {
+            records.erase(it);
+            return true;
+        }
+        return false;
+    }
+};
+
+std::string readLine(const std::string& prompt) {
+    std::cout << prompt;
+    std::string line;
+    if (!std::getline(std::cin, line)) {
+        std::cout << "\n";
+        std::exit(0);
+    }
+    return line;
+}
+
+int readInt(const std::string& prompt) {
+    while (true) {
+        std::string line = readLine(prompt);
+        if (isValidValue(DataType::INT, line)) return std::stoi(line);
+        std::cout << "Please enter a valid integer.\n";
+    }
+}
+
+const char* typeName(DataType t) {
+    switch (t) {
+        case DataType::INT: return "INT";
+        case DataType::FLOAT: return "FLOAT";
+        default: return "STRING";
+    }
+}
+
+void createTableMenu(Database& db) {
+    std::string tableName = readLine("Table name: ");
+    if (tableName.empty()) {
+        std::cout << "Table name cannot be empty.\n";
+        return;
+    }
+
+    int count = readInt("Number of columns: ");
+    if (count < 1) {
+        std::cout << "A table needs at least one column.\n";
+        return;
+    }
+
+    std::vector<Column> columns;
+    for (int i = 1; i <= count; ++i) {
+        std::string colName = readLine("Column " + std::to_string(i) + " name: ");
+        if (colName.empty()) {
+            std::cout << "Column name cannot be empty. Table not created.\n";
+            return;
+        }
+        int t = 0;
+        while (t < 1 || t > 3) {
+            t = readInt("Type of '" + colName + "' (1=INT, 2=STRING, 3=FLOAT): ");
+        }
+        DataType type = (t == 1) ? DataType::INT
+                      : (t == 2) ? DataType::STRING
+                                 : DataType::FLOAT;
+        columns.emplace_back(colName, type);
+    }
+
+    db.addTable(TableSchema(tableName, columns));
+    std::cout << "Table '" << tableName << "' created.\n";
+}
+
+void insertMenu(Database& db) {
+    std::string tableName = readLine("Table name: ");
+    const auto& columns = db.getTableSchema(tableName).getColumns();
+
+    std::vector<std::string> values;
+    for (const auto& col : columns) {
+        values.push_back(readLine(col.name + " (" + typeName(col.type) + "): "));
+    }
+    int id = db.insertRecord(tableName, values);
+    std::cout << "Record inserted with ID " << id << ".\n";
+}
+
+void findMenu(Database& db) {
+    std::string tableName = readLine("Table name: ");
+    std::string column = readLine("Column to search: ");
+    std::string value = readLine("Value: ");
+
+    auto results = db.findRecords(tableName, column, value);
+    std::cout << "Found " << results.size() << " record(s).\n";
+    for (const Record* r : results) {
+        std::cout << "ID " << r->getId() << ": ";
+        for (const auto& v : r->getValues()) std::cout << v << "\t";
+        std::cout << "\n";
+    }
+}
+
+void updateMenu(Database& db) {
+    std::string tableName = readLine("Table name: ");
+    std::string column = readLine("Column to update: ");
+    std::string oldValue = readLine("Old value: ");
+    std::string newValue = readLine("New value: ");
+
+    int n = db.updateRecords(tableName, column, oldValue, newValue);
+    std::cout << "Updated " << n << " record(s).\n";
+}
+
+void deleteMenu(Database& db) {
+    std::string tableName = readLine("Table name: ");
+    int id = readInt("Record ID to delete: ");
+    std::cout << (db.deleteRecord(tableName, id) ? "Record deleted.\n"
+                                                 : "No record with that ID.\n");
+}
+
+void printMenu() {
+    std::cout << "\n===== Sina Database =====\n"
+              << "1. Create table\n"
+              << "2. Show tables\n"
+              << "3. Show table data\n"
+              << "4. Insert record\n"
+              << "5. Find records\n"
+              << "6. Update records\n"
+              << "7. Delete record\n"
+              << "0. Exit\n";
+}
+
+int main() {
+    Database db("Sina Database");
+
+    while (true) {
+        printMenu();
+        int choice = readInt("Choose: ");
+        if (choice == 0) break;
+
+        try {
+            switch (choice) {
+                case 1: createTableMenu(db); break;
+                case 2: db.showTables(); break;
+                case 3: db.showTableData(readLine("Table name: ")); break;
+                case 4: insertMenu(db); break;
+                case 5: findMenu(db); break;
+                case 6: updateMenu(db); break;
+                case 7: deleteMenu(db); break;
+                default: std::cout << "Invalid choice.\n";
+            }
+        } catch (const std::exception& e) {
+            std::cout << "Error: " << e.what() << "\n";
+        }
+    }
+    std::cout << "Goodbye!\n";
+    return 0;
+}
